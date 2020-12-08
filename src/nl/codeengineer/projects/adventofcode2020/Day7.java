@@ -10,6 +10,7 @@ public class Day7 {
     public static void main(String[] args) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get("./input/day7.txt"));
         part1(lines);
+        part2(lines);
     }
 
     private static void part1(List<String> lines) {
@@ -22,14 +23,32 @@ public class Day7 {
         System.out.println(containers.size());
     }
 
+    private static void part2(List<String> lines) {
+        final Map<String, List<String>> bagRules = new HashMap<>();
+
+        lines.forEach(l -> bagRules.putAll(parseLine(l)));
+
+        int count = getItemCount("shinygold", bagRules);
+        System.out.println(count);
+    }
+
 
     private static void getContainers(String bagColor,  Map<String, List<String>> rules, Set<String> containers) {
         rules.forEach((rule, items) -> {
-                  if (items.contains(bagColor) && !containers.contains(rule)) {
-                      containers.add(rule);
-                      getContainers(rule, rules, containers);
-                  }
+            if (items.contains(bagColor) && !containers.contains(rule)) {
+                containers.add(rule);
+                getContainers(rule, rules, containers);
+            }
         });
+    }
+
+    private static int getItemCount(String bagColor,  Map<String, List<String>> rules) {
+        List<String> currentRules = rules.get(bagColor);
+        int count = currentRules.size();
+        for(String rule: currentRules) {
+            count += getItemCount(rule, rules);
+        }
+        return count;
     }
 
     public static List<String> testInput1() {
@@ -46,6 +65,18 @@ public class Day7 {
         return Arrays.asList(input.split("\\n"));
     }
 
+    public static List<String> testInput2() {
+        String input = "shiny gold bags contain 2 dark red bags.\n" +
+                "dark red bags contain 2 dark orange bags.\n" +
+                "dark orange bags contain 2 dark yellow bags.\n" +
+                "dark yellow bags contain 2 dark green bags.\n" +
+                "dark green bags contain 2 dark blue bags.\n" +
+                "dark blue bags contain 2 dark violet bags.\n" +
+                "dark violet bags contain no other bags.";
+
+        return Arrays.asList(input.split("\\n"));
+    }
+
     public static Map<String, List<String>> parseLine(String line) {
         Map<String, List<String>> containers = new HashMap<>();
 
@@ -58,9 +89,13 @@ public class Day7 {
 
             if (!scanner.hasNext("no")) {
                 while (scanner.hasNext()) {
-                    scanner.next("\\d");
+                    int count = scanner.nextInt();
                     String contained = scanner.next() + scanner.next();
-                    items.add(contained);
+
+                    for (int i =0; i < count; i++){
+                        items.add(contained);
+                    }
+
                     scanner.next("bags?[,.]");
                 }
             }
