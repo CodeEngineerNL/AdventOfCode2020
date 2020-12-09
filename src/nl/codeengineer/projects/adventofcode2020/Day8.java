@@ -52,7 +52,7 @@ public class Day8 {
         List<Instruction> instructions = lines.stream().map(Day8::parseLine).collect(Collectors.toList());
 
         Set<Integer> executedLines = new HashSet<>();
-        Stack<HistoryItem> history = new Stack<>();
+        Deque<HistoryItem> history = new ArrayDeque<>();
 
         int changedLine = -1;
 
