@@ -12,8 +12,7 @@ public class Day10 {
     public static void main(String[] args) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get("./input/day10.txt"));
 
-        List<Integer> ratings = lines.stream().map(Integer::parseInt).collect(Collectors.toList());
-        ratings.sort(Integer::compareTo);
+        List<Integer> ratings = lines.stream().map(Integer::parseInt).sorted().collect(Collectors.toList());
 
         ratings.add(0, 0);
         ratings.add(ratings.get(ratings.size() - 1) + 3);
@@ -35,11 +34,6 @@ public class Day10 {
         }
 
         System.out.println(diff1 * diff3);
-    }
-
-    private static class GraphItem {
-        public int num;
-        public List<GraphItem> next = new ArrayList<>();
     }
 
     private static void part2(List<Integer> ratings) {
@@ -64,8 +58,8 @@ public class Day10 {
             int num = ratings.get(i);
             if (!calculated.containsKey(num)) {
 
-                if (graph.get(num).size() < 1) {
-                    calculated.put(num, 1l);
+                if (graph.get(num).isEmpty()) {
+                    calculated.put(num, 1L);
                 } else {
                     long count = 0;
                     for (Integer nextNum: graph.get(num)) {
